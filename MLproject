@@ -1,0 +1,16 @@
+name: mlflow_regression
+
+conda_env: env.yaml
+
+entry_points:
+
+  # We can specify multiple entry points
+
+  main:
+    # We can also specify parameters, such as the S3 path to an object in S3
+    # e.g.
+    # parameters:
+    #   train_data_file: my-bucket/my-train-data.csv
+    # command: "python run_target_notebook.py --file notebooks/boston_house_prices.ipynb --training_data {train_data_file}"
+
+    command: "python run_target_notebook.py --file notebooks/boston_house_prices.ipynb"
