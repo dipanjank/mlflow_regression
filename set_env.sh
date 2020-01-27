@@ -1,0 +1,13 @@
+export MINIO_ACCESS_KEY=minio
+export MINIO_SECRET_KEY=minio123
+export POSTGRES_USER=postgres
+export POSTGRES_PASSWORD=postgres
+export POSTGRES_DB=mlflow_db
+export POSTGRES_INITDB_ARGS="--encoding=UTF"
+export MLFLOW_S3_ENDPOINT_URL="http://minio:9000"
+export DB_URI="postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresql:5432/${POSTGRES_DB}"
+export MLFLOW_TRACKING_URI="http://localhost:5000"
+export AWS_DEFAULT_REGION=eu-west-1
+export S3_USE_SIGV4="True"
+export AWS_ACCESS_KEY_ID=${MINIO_ACCESS_KEY}
+export AWS_SECRET_ACCESS_KEY=${MINIO_SECRET_KEY}

@@ -1,0 +1,64 @@
+version: "3"
+
+services:
+  minio:
+    image: minio/minio
+    volumes:
+      - data1:/minio/data
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: server /minio/data
+    hostname: minio
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  waitfordb:
+    image: dadarek/wait-for-dependencies
+    depends_on:
+      - postgresql
+    command: postgresql:5432
+
+  postgresql:
+    image: postgres:10.5
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mlflow-db
+      - POSTGRES_INITDB_ARGS="--encoding=UTF-8"
+    ports:
+      - 5432:5432
+    hostname: postgresql
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8888:8888
+      - 5000:5000
+    depends_on:
+      - postgresql
+      - waitfordb
+      - minio
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mlflow-db
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - DB_URI="postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresql:5432/${POSTGRES_DB}"
+      - AWS_DEFAULT_REGION=eu-west-1
+      - S3_USE_SIGV4=True
+      - AWS_ACCESS_KEY_ID=minio
+      - AWS_SECRET_ACCESS_KEY=minio123
+    command: "mlflow server --backend-store-uri ${DB_URI} --host 0.0.0.0 --port 5000 --default-artifact-root s3://mlflow-regression"
+    hostname: mlflow-server
+
+volumes:
+  data1:
+

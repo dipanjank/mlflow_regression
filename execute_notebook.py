@@ -6,13 +6,27 @@ import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor
 
 
+TRAIN_DATA_DIR = '/srv/model/input'
+MODEL_OUTPUT_DIR = '/srv/model/output'
+
+
+def download_files(input_path):
+    os.makedirs(TRAIN_DATA_DIR, exist_ok=True)
+    logging.info(f"Copying {input_path} to {TRAIN_DATA_DIR}")
+
+
 def main():
-    parser = ArgumentParser(description="Run a Jupyter Notebook")
+    parser = ArgumentParser(description="Execute a Jupyter Notebook Programmatically.")
+
     parser.add_argument('-f', '--file', required=True, help="Name of the notebook file.")
+    parser.add_argument('-i', '--input_path', required=True, help="S3 location of the output path.")
+
     args = parser.parse_args()
     notebook_name = args.file
-    final_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), notebook_name)
-    run_notebook(final_path)
+    notebook_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), notebook_name)
+
+    download_files(args.input_path)
+    run_notebook(notebook_path)
 
 
 def run_notebook(notebook_path):
