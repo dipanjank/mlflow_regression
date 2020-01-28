@@ -41,11 +41,3 @@ Model Activation and Quality Control
 
 - Run the mlflow ui (possibly also as a Fargate Service).
 - Use the Front-end to activate models and inspect model metadata.
-
-Support for Customer Managed models
------------------------------------
-- First option is: "Give us an API".
-- Otherwise, Customer needs to package the model in MLFlow format.
-- And then create a docker image (MLFlow has shortcuts for this).
-- We will need to create one Fargate service per customer image.
-- Re-building the model will work the same way.
